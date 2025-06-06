@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertidor de Texto - Sin Tildes y Mayúsculas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .text-area-container {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .convert-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .convert-btn:active {
+            transform: translateY(0);
+        }
+
+        .clear-btn {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .clear-btn:hover {
+            background: #d0d0d0;
+            transform: translateY(-2px);
+        }
+
+        .copy-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .stats {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats h3 {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .tooltip {
+            position: fixed;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            button {
+                flex: 100%;
+            }
+        }
+
+        .success-animation {
+            animation: success 0.5s ease-out;
+        }
+
+        @keyframes success {
+            0% {
+                transform: scale(0.95);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Convertidor de Texto</h1>
+        <p class="subtitle">Elimina tildes, convierte a mayúsculas y transforma ñ en n</p>
+        
+        <div class="text-area-container">
+            <label for="inputText">Texto Original:</label>
+            <textarea 
+                id="inputText" 
+                rows="8" 
+                placeholder="Escribe o pega aquí tu texto con tildes, minúsculas y eñes..."
+            ></textarea>
+        </div>
+
+        <div class="button-container">
+            <button class="convert-btn" onclick="convertirTexto()">
+                🔄 Convertir Texto
+            </button>
+            <button class="clear-btn" onclick="limpiarTodo()">
+                🗑 Limpiar Todo
+            </button>
+        </div>
+
+        <div class="text-area-container">
+            <label for="outputText">Texto Convertido:</label>
+            <textarea 
+                id="outputText" 
+                rows="8" 
+                placeholder="Aquí aparecerá tu texto sin tildes, en mayúsculas y sin eñes..."
+                readonly
+            ></textarea>
+        </div>
+
+        <div class="button-container">
+            <button class="copy-btn" onclick="copiarTexto()" id="copyBtn" style="display: none;">
+                📋 Copiar Texto Convertido
+            </button>
+        </div>
+
+        <div class="stats" id="stats">
+            <h3>📊 Estadísticas de conversión:</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="charCount">0</div>
+                    <div class="stat-label">Caracteres</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="wordCount">0</div>
+                    <div class="stat-label">Palabras</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="accentCount">0</div>
+                    <div class="stat-label">Tildes eliminadas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="enneCount">0</div>
+                    <div class="stat-label">Eñes convertidas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip">¡Texto copiado!</div>
+
+    <script>
+        function eliminarTildes(texto) {
+            const tildes = {
+                'á': 'a', 'à': 'a', 'ä': 'a', 'â': 'a', 'ã': 'a',
+                'é': 'e', 'è': 'e', 'ë': 'e', 'ê': 'e',
+                'í': 'i', 'ì': 'i', 'ï': 'i', 'î': 'i',
+                'ó': 'o', 'ò': 'o', 'ö': 'o', 'ô': 'o', 'õ': 'o',
+                'ú': 'u', 'ù': 'u', 'ü': 'u', 'û': 'u',
+                'Á': 'A', 'À': 'A', 'Ä': 'A', 'Â': 'A', 'Ã': 'A',
+                'É': 'E', 'È': 'E', 'Ë': 'E', 'Ê': 'E',
+                'Í': 'I', 'Ì': 'I', 'Ï': 'I', 'Î': 'I',
+                'Ó': 'O', 'Ò': 'O', 'Ö': 'O', 'Ô': 'O', 'Õ': 'O',
+                'Ú': 'U', 'Ù': 'U', 'Ü': 'U', 'Û': 'U'
+            };
+            
+            return texto.replace(/[áàäâãéèëêíìïîóòöôõúùüûÁÀÄÂÃÉÈËÊÍÌÏÎÓÒÖÔÕÚÙÜÛ]/g, 
+                letra => tildes[letra] || letra);
+        }
+
+        function contarTildes(texto) {
+            const tildesRegex = /[áàäâãéèëêíìïîóòöôõúùüûÁÀÄÂÃÉÈËÊÍÌÏÎÓÒÖÔÕÚÙÜÛ]/g;
+            const matches = texto.match(tildesRegex);
+            return matches ? matches.length : 0;
+        }
+
+        function contarEnnes(texto) {
+            const ennesRegex = /[ñÑ]/g;
+            const matches = texto.match(ennesRegex);
+            return matches ? matches.length : 0;
+        }
+
+        function convertirTexto() {
+            const inputText = document.getElementById('inputText').value;
+            
+            if (!inputText.trim()) {
+                alert('Por favor, ingresa algún texto para convertir.');
+                return;
+            }
+
+            // Contar estadísticas antes de la conversión
+            const tildesCount = contarTildes(inputText);
+            const ennesCount = contarEnnes(inputText);
+
+            // Realizar conversiones
+            let textoConvertido = inputText;
+            textoConvertido = eliminarTildes(textoConvertido);
+            textoConvertido = textoConvertido.replace(/ñ/g, 'n').replace(/Ñ/g, 'N');
+            textoConvertido = textoConvertido.toUpperCase();
+
+            // Mostrar resultado
+            document.getElementById('outputText').value = textoConvertido;
+            
+            // Mostrar botón de copiar
+            document.getElementById('copyBtn').style.display = 'block';
+            
+            // Actualizar estadísticas
+            const palabras = textoConvertido.trim().split(/\s+/).length;
+            document.getElementById('charCount').textContent = textoConvertido.length;
+            document.getElementById('wordCount').textContent = palabras;
+            document.getElementById('accentCount').textContent = tildesCount;
+            document.getElementById('enneCount').textContent = ennesCount;
+            
+            // Mostrar panel de estadísticas
+            document.getElementById('stats').style.display = 'block';
+            
+            // Animación de éxito
+            document.getElementById('outputText').classList.add('success-animation');
+            setTimeout(() => {
+                document.getElementById('outputText').classList.remove('success-animation');
+            }, 500);
+        }
+
+        function limpiarTodo() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputText').value = '';
+            document.getElementById('copyBtn').style.display = 'none';
+            document.getElementById('stats').style.display = 'none';
+        }
+
+        function copiarTexto() {
+            const outputText = document.getElementById('outputText');
+            outputText.select();
+            outputText.setSelectionRange(0, 99999); // Para móviles
+            
+            navigator.clipboard.writeText(outputText.value).then(() => {
+                // Mostrar tooltip
+                const tooltip = document.getElementById('tooltip');
+                const btn = document.getElementById('copyBtn');
+                const rect = btn.getBoundingClientRect();
+                
+                tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+                tooltip.style.top = rect.top - tooltip.offsetHeight - 10 + 'px';
+                tooltip.style.opacity = '1';
+                
+                setTimeout(() => {
+                    tooltip.style.opacity = '0';
+                }, 2000);
+            }).catch(() => {
+                alert('Error al copiar el texto. Por favor, selecciona y copia manualmente.');
+            });
+        }
+
+        // Permitir usar Enter + Ctrl/Cmd para convertir
+        document.getElementById('inputText').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                convertirTexto();
+            }
+        });
+
+        // Auto-ajustar altura de textareas
+        const textareas = document.querySelectorAll('textarea');
+        textareas.forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        });
+    </script>
+</body>
+</html>
