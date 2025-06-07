@@ -16,6 +16,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
@@ -29,6 +30,7 @@
             max-width: 800px;
             width: 100%;
             animation: fadeIn 0.5s ease-out;
+            margin-bottom: 30px;
         }
 
         @keyframes fadeIn {
@@ -210,6 +212,46 @@
             z-index: 1000;
         }
 
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9em;
+            padding: 20px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        .footer .copyright {
+            font-weight: 500;
+        }
+
+        .footer .dedication {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .footer .heart {
+            color: #ff6b6b;
+            font-size: 1.1em;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
         @media (max-width: 600px) {
             h1 {
                 font-size: 2em;
@@ -217,6 +259,10 @@
             
             button {
                 flex: 100%;
+            }
+
+            .footer {
+                font-size: 0.8em;
             }
         }
 
@@ -239,15 +285,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>Convertidor de Texto</h1>
-        <p class="subtitle">Elimina tildes, convierte a mayúsculas y transforma ñ en n</p>
+        <h1>Convertidor para los chicos de la Jave</h1>
+        <p class="subtitle">Convertidor de texto para que les sea mas facil cambiar los textos de los productos</p>
+        
         
         <div class="text-area-container">
-            <label for="inputText">Texto Original:</label>
+            <label for="inputText">Texto que entrega el FLIP:</label>
             <textarea 
                 id="inputText" 
                 rows="8" 
-                placeholder="Escribe o pega aquí tu texto con tildes, minúsculas y eñes..."
+                placeholder="Pega o escribe acá el texto en minusculas o lo que te entrega FLIP del producto que estás trabajando"
             ></textarea>
         </div>
 
@@ -265,18 +312,18 @@
             <textarea 
                 id="outputText" 
                 rows="8" 
-                placeholder="Aquí aparecerá tu texto sin tildes, en mayúsculas y sin eñes..."
+                placeholder="Ahora todo convertido para no estresarte cambiando todo a mano ni usando CHAT GPT"
                 readonly
             ></textarea>
         </div>
 
         <div class="button-container">
             <button class="copy-btn" onclick="copiarTexto()" id="copyBtn" style="display: none;">
-                📋 Copiar Texto Convertido
+                📋 Copiar 
             </button>
         </div>
 
-        <div class="stats" id="stats">
+        <!--<div class="stats" id="stats">
             <h3>📊 Estadísticas de conversión:</h3>
             <div class="stats-grid">
                 <div class="stat-item">
@@ -296,8 +343,13 @@
                     <div class="stat-label">Eñes convertidas</div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
+
+    <footer class="footer">
+        <p class="copyright">© 2025 - Todos los derechos reservados | Nicolas A Machado Amaya</p>
+        <p class="dedication">Dedicado con amor a mi querida Valen para facilitar su trabajo <span class="heart">❤</span></p>
+    </footer>
 
     <div class="tooltip" id="tooltip">¡Texto copiado!</div>
 
